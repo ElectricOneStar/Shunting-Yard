@@ -18,11 +18,20 @@ int main(){
   char* infix = new char[20];
   char* prefix = new char[20];
   char* postfix = new char[20];
+  char* currentState = new char[20];
+  /*
   Node* tree(NULL);
   Node* queue(NULL);
   Node* stack(NULL);
   Node* tail(NULL);
-  char* currentState = new char[20];
+  */
+  cout << "here" << endl;
+  Node* tree = new Node(NULL);
+  Node* queue = new Node(NULL);
+  Node* stack = new Node(NULL);
+  Node* tail = new Node(NULL);
+  cout << "here2" << endl;
+  //char* currentState = new char[20];
   int* tokenIndex = new int;
   (*tokenIndex) = 1;
   int* counterOne = new int;
@@ -50,14 +59,25 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   Parce(infix, tokenIndex, counterOne, currentData, counterTwo);
   //cout << "a" << endl;
   //cout << strlen(currentData) << endl;
+  //cout << "here" << endl;
   for(int i = 0; i < strlen(currentData); i++){
    cout << currentData[i];
   }
-  Node* create(NULL); // watch identity problem
-  (*create).setData(currentData);
+  //  cout << "here2 " << endl;
+  Node* create = new Node(currentData);
+  // cout << (*create).getData()[0];
+  //  Node* create(NULL); // watch identity problem
+  //(*create).setData(currentData);
+ // cout << (*create).getData()[0];
   CheckState(currentState, currentData);
   if(strcmp(currentState , "Number") == 0){
     cout << "Number" << endl;
+    //(*queue).setData(currentData);
+    //cout << (*create).getData()[0];
+    Push(queue, create);
+    //cout << (*(*queue).getNext()).getData()[0];
+    // Print((*queue).getNext());
+    // cout << "here" << endl;
   }
   if(strcmp(currentState, "Basic Operation") == 0){
     cout << "Basic Operation" << endl;
@@ -74,13 +94,19 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   currentState[0] = '\0';
   cout << endl;
   //cout << (*tokenIndex);
-  currentData[0] = '\0';
+  //currentData[0] = '\0';
   (*counterOne) = 0;
   (*counterTwo) = 0;
   
   (*tokenIndex)++;
+  //  cout << (*create).getData()[0] << endl;
+    //  Print(create);
+  // cout << (*create).getData()[0];
+  //Print((*queue).getNext());
   }
   while((*tokenIndex) != (*listSize));
+  Print((*queue).getNext());
+  // Print(create)
   // return postfix
   //tokenIndex++;
   //(*counterOne) = 0;
@@ -145,6 +171,9 @@ void CheckState(char* currentState, char* currentData){
 }
 
 void Push(Node* stack, Node* add){
+  //cout << "here1" << endl;
+  //cout << (*add).getData()[0];
+  //cout << "here2" << endl;
   (*GetEnd(stack)).setNext(add);
 }
 Node* GetEnd(Node* header){
@@ -165,7 +194,7 @@ Node* Pop(Node* stack, Node* tail){
     
 }
 void Print(Node* header){
-  cout << (*(*header).getData()) << " ";
+  cout << (*header).getData() << " ";
   if((*header).getNext() != NULL){
     Print((*header).getNext());
   }
@@ -175,7 +204,7 @@ void Print(Node* header){
   }
 }
 void Enqueue(Node* queue, Node* add){
-
+  
 }
 Node* Dequeue(Node* queue, Node* tail){
   if((*(*queue).getNext()).getNext() == NULL){
