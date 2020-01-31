@@ -11,7 +11,8 @@ Node* GetEnd(Node* header);
 Node* Pop(Node* stack, Node* tail);
 void Print(Node* header);
 Node* Dequeue(Node* queue, Node* tail);
-
+void Enqueue(Node* queue, Node* add);
+bool CheckEmpty(Node* header);
 int main(){
   //char* input = new char[20];
   cout << "Welcome to Shunting Yard Please enter an mathematical expression in infix notation" << endl;
@@ -41,7 +42,7 @@ int main(){
   int* listSize = new int;
   (*listSize) = 0;
   char* currentData = new char[20];
-  
+  //bool* Empty = new bool;
   //Node* tree(NULL);
   //Node* tree = new Node();
   cin.get(infix, 20);
@@ -55,7 +56,7 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   sizeList(infix, listSize);
   (*listSize) = (*listSize) + 1;
   // cout << "hi" << endl;
-  do{
+   while((*tokenIndex) != (*listSize)){
   Parce(infix, tokenIndex, counterOne, currentData, counterTwo);
   //cout << "a" << endl;
   //cout << strlen(currentData) << endl;
@@ -64,7 +65,9 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
    cout << currentData[i];
   }
   //  cout << "here2 " << endl;
-  Node* create = new Node(currentData);
+  char* newData = new char[20];
+  (*newData) = (*currentData);
+    Node* create = new Node(newData);
   // cout << (*create).getData()[0];
   //  Node* create(NULL); // watch identity problem
   //(*create).setData(currentData);
@@ -74,7 +77,8 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
     cout << "Number" << endl;
     //(*queue).setData(currentData);
     //cout << (*create).getData()[0];
-    Push(queue, create);
+    //Push(queue, create);
+    Enqueue(queue, create);
     //cout << (*(*queue).getNext()).getData()[0];
     // Print((*queue).getNext());
     // cout << "here" << endl;
@@ -84,6 +88,7 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   }
   if(strcmp(currentState, "Left Paraenthesis") == 0){
     cout << "Left Paraenthesis" << endl;
+    Push(stack, create);
   }
   if(strcmp(currentState, "Right Paraenthesis") == 0){
     cout << "Right Paraenthesis" << endl;
@@ -94,7 +99,7 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   currentState[0] = '\0';
   cout << endl;
   //cout << (*tokenIndex);
-  //currentData[0] = '\0';
+  currentData[0] = '\0';
   (*counterOne) = 0;
   (*counterTwo) = 0;
   
@@ -104,8 +109,25 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   // cout << (*create).getData()[0];
   //Print((*queue).getNext());
   }
-  while((*tokenIndex) != (*listSize));
+  
+   while(CheckEmpty(stack) == false){
+     //cout << "here" << endl;
+     Enqueue(queue, Pop(stack, tail));
+   }
+   
+   if(CheckEmpty(queue) == false){
   Print((*queue).getNext());
+   }
+   else{
+     cout << "Queue is Empty" << endl;
+   }
+
+   if(CheckEmpty(stack) == false){
+  Print((*stack).getNext());
+   }
+   else{
+     cout << "Stack is Empty" << endl;
+   }
   // Print(create)
   // return postfix
   //tokenIndex++;
@@ -185,11 +207,15 @@ Node* GetEnd(Node* header){
   }
 }
 
-Node* Pop(Node* stack, Node* tail){
+Node* Pop(Node* stack, Node* tail){ // ??
   if((*(*stack).getNext()).getNext() == NULL){
-    tail = (*stack).getNext();
+    //Node* tempOne = new Node(NULL);
+    //(*tempOne) = (*(*stack).getNext());
+    //tail = (*stack).getNext();
+    (*tail) = (*(*stack).getNext());
     (*stack).setNext(NULL);
     return tail;
+    //return tempOne;
   }
     
 }
@@ -203,15 +229,28 @@ void Print(Node* header){
     return;
   }
 }
-void Enqueue(Node* queue, Node* add){
-  
+void Enqueue(Node* queue, Node* add){ // ??
+  if((*queue).getNext() == NULL){
+    (*queue).setNext(add);
+    return;
+  }
+  (*add).setNext((*queue).getNext());
+  (*queue).setNext(add);
 }
-Node* Dequeue(Node* queue, Node* tail){
+Node* Dequeue(Node* queue, Node* tail){ 
   if((*(*queue).getNext()).getNext() == NULL){
     tail = (*queue).getNext();
     (*queue).setNext(NULL);
     return tail;
   }
 
+}
+bool CheckEmpty(Node* header){
+  if((*header).getNext() == NULL){
+    return true;
+  }
+  else{
+    return false;
+      }
 }
 
