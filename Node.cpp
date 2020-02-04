@@ -45,6 +45,18 @@ void Node::setData(char* inputData){
 char* Node::getData(){
   return data;
 }
+char* Node::getAssociativity(){
+  return associativity;
+}
+void Node::setAssociativity(char* inputAssociativity){
+  associativity = inputAssociativity;
+}
+int* Node::getPrecedence(){
+  return precedence;
+}
+void Node::setPrecedence(int* inputPrecedence){
+  precedence = inputPrecedence;
+}
 /*
 char Node::getData(){
   return data;

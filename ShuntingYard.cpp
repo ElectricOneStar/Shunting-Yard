@@ -2,15 +2,16 @@
 #include<iostream>
 #include "Node.h"
 using namespace std;
-char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* tail);
+char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, int* precedence, char* associativity, Node* tail);
 void CheckState(char* currentState, char* currentData);
 void Parce(char* infix, int* token, int* counterOne, char* currentData, int* counterTwo);
 void sizeList(char* infix, int* listSize);
 void Push(Node* stack, Node* add);
 Node* GetEnd(Node* header);
-Node* Pop(Node* stack, Node* tail);
+Node* Pop(Node* stack, Node* previous, Node* tail);
 void Print(Node* header);
-Node* Dequeue(Node* queue, Node* tail);
+Node* Peek(Node* stack, Node* previous, Node* tail);
+Node* Dequeue(Node* queue, Node* previous);
 void Enqueue(Node* queue, Node* add);
 bool CheckEmpty(Node* header);
 int main(){
@@ -26,10 +27,13 @@ int main(){
   Node* stack(NULL);
   Node* tail(NULL);
   */
+  int* precedence = new int;
+  char* associativity = new char;
   cout << "here" << endl;
   Node* tree = new Node(NULL);
   Node* queue = new Node(NULL);
   Node* stack = new Node(NULL);
+  Node* previous = new Node(NULL);
   Node* tail = new Node(NULL);
   cout << "here2" << endl;
   //char* currentState = new char[20];
@@ -47,10 +51,10 @@ int main(){
   //Node* tree = new Node();
   cin.get(infix, 20);
   
-  postfix = ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, tail);
+  postfix = ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, precedence, associativity, tail);
 return 0;
 }
-char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* tail){
+char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, int* precedence, char* associativity, Node* tail){
   
   //do{
   sizeList(infix, listSize);
@@ -83,8 +87,39 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
     // Print((*queue).getNext());
     // cout << "here" << endl;
   }
-  if(strcmp(currentState, "Basic Operation") == 0){
-    cout << "Basic Operation" << endl;
+  if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
+    if(strcmp(currentState, "Addition or Subtraction") == 0){
+      cout << "Addition or Subtraction" << endl;
+      (*precedence) = 2;
+      (*associativity) = 'L';
+      (*create).setPrecedence(precedence);
+      (*create).setAssociativity(associativity);
+    }
+    if(strcmp(currentState, "Power") == 0){
+    cout << "Power" << endl;
+          (*precedence) = 4;
+      (*associativity) = 'R';
+      (*create).setPrecedence(precedence);
+      (*create).setAssociativity(associativity);
+
+    }
+    if(strcmp(currentState, "Division or Multiplication") == 0){
+      cout << "Division or Multiplication" << endl;
+      (*precedence) = 3;
+      (*associativity) = 'L';
+      (*create).setPrecedence(precedence);
+      (*create).setAssociativity(associativity);
+
+    }
+    cout << (*(*create).getPrecedence()) << endl;
+    cout << (*(*create).getAssociativity()) << endl;
+    while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) > (*(*create).getPrecedence()) || CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) == (*(*create).getPrecedence()) && (*(*create).getAssociativity()) == 'L' && CheckEmpty(stack) == false && (*Peek(stack, previous, tail)).getData() != "("){
+      //cout << "Here" << endl;
+      Enqueue(queue, Pop(stack, previous, tail));
+      //  cout << "here2" << endl;
+           }
+    //    Push()
+     Push(stack, create);
   }
   if(strcmp(currentState, "Left Paraenthesis") == 0){
     cout << "Left Paraenthesis" << endl;
@@ -92,9 +127,6 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   }
   if(strcmp(currentState, "Right Paraenthesis") == 0){
     cout << "Right Paraenthesis" << endl;
-  }
-  if(strcmp(currentState, "Power") == 0){
-    cout << "Power" << endl;
   }
   currentState[0] = '\0';
   cout << endl;
@@ -109,12 +141,12 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   // cout << (*create).getData()[0];
   //Print((*queue).getNext());
   }
-  
+   /*
    while(CheckEmpty(stack) == false){
      //cout << "here" << endl;
      Enqueue(queue, Pop(stack, tail));
    }
-   
+   */
    if(CheckEmpty(queue) == false){
   Print((*queue).getNext());
    }
@@ -178,8 +210,11 @@ void CheckState(char* currentState, char* currentData){
   if(currentData[0] == '1' || currentData[0] == '2' || currentData[0] == '3' || currentData[0] == '4' || currentData[0] == '5' || currentData[0] == '6' || currentData[0] == '7' || currentData[0] == '8' || currentData[0] == '9'){
     strcpy(currentState, "Number");
   }
-  if(currentData[0] == '+' || currentData[0] == '-' || currentData[0] == '%' || currentData[0] == '*'){
-    strcpy(currentState, "Basic Operation");
+  if(currentData[0] == '+' || currentData[0] == '-'){
+    strcpy(currentState, "Addition or Subtraction");
+  }
+  if(currentData[0] == '%' || currentData[0] == '*'){
+    strcpy(currentState, "Division or Multiplication");
   }
   if(currentData[0] == ')'){
     strcpy(currentState, "Right Paraenthesis");
@@ -206,19 +241,48 @@ Node* GetEnd(Node* header){
     return header;
   }
 }
-
-Node* Pop(Node* stack, Node* tail){ // ??
-  if((*(*stack).getNext()).getNext() == NULL){
+// fix pop and peek
+Node* Pop(Node* stack, Node* previous, Node* tail){ // ??
+  previous = stack;
+  if((*stack).getNext() == NULL){
     //Node* tempOne = new Node(NULL);
     //(*tempOne) = (*(*stack).getNext());
     //tail = (*stack).getNext();
-    (*tail) = (*(*stack).getNext());
-    (*stack).setNext(NULL);
+    //  if(previous != NULL){
+    tail = stack;
+    (*previous).setNext(NULL);
     return tail;
     //return tempOne;
-  }
-    
+  
+    // tail = stack
+  }  
+   else{
+	 //previous = stack;
+      Peek((*stack).getNext(), previous, tail);
+    }
+
 }
+  Node* Peek(Node* stack, Node* previous, Node* tail){
+    previous = stack;
+  if((*stack).getNext() == NULL){
+    //Node* tempOne = new Node(NULL);
+    //(*tempOne) = (*(*stack).getNext());
+    //tail = (*stack).getNext();
+    //  if(previous != NULL){
+    tail = stack;
+    //  (*previous).setNext(NULL);
+    return tail;
+    //return tempOne;
+  
+    // tail = stack
+  }
+    else{
+	 //previous = stack;
+      Peek((*stack).getNext(), previous, tail);
+    }
+
+}
+
 void Print(Node* header){
   cout << (*header).getData() << " ";
   if((*header).getNext() != NULL){
@@ -237,7 +301,7 @@ void Enqueue(Node* queue, Node* add){ // ??
   (*add).setNext((*queue).getNext());
   (*queue).setNext(add);
 }
-Node* Dequeue(Node* queue, Node* tail){ 
+Node* Dequeue(Node* queue, Node* tail){ // fix
   if((*(*queue).getNext()).getNext() == NULL){
     tail = (*queue).getNext();
     (*queue).setNext(NULL);
@@ -253,4 +317,6 @@ bool CheckEmpty(Node* header){
     return false;
       }
 }
+//bool CheckOperator(){
 
+//}

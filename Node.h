@@ -17,11 +17,17 @@ public:
   Node* getNext();
   char* getData();
   //char getData();
+  int* getPrecedence();
+  char* getAssociativity();
+  void setPrecedence(int* inputPrecedence);
+  void setAssociativity(char* inputAssociativity);
 private:
   Node* next;
   Node* right;
   Node* left;
   char* data = new char[20];
+  char* associativity = new char;
+  int* precedence = new int;
   //char data;
 };
 #endif
