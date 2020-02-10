@@ -2,7 +2,7 @@
 #include<iostream>
 #include "Node.h"
 using namespace std;
-char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, int* precedence, char* associativity, Node* tail);
+void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, Node* tail);
 void CheckState(char* currentState, char* currentData);
 void Parce(char* infix, int* token, int* counterOne, char* currentData, int* counterTwo);
 void sizeList(char* infix, int* listSize);
@@ -11,24 +11,27 @@ Node* GetEnd(Node* header);
 Node* Pop(Node* stack, Node* previous, Node* tail);
 void Print(Node* header);
 Node* Peek(Node* stack, Node* previous, Node* tail);
-Node* Dequeue(Node* queue, Node* previous);
+Node* Dequeue(Node* queue, Node* previous, Node* tail);
 void Enqueue(Node* queue, Node* add);
 bool CheckEmpty(Node* header);
+void PrintQueue(Node* queue, Node* previous, Node* tail);
+void BuildPostfix(Node* queue, Node* previous, Node* tail, Node* postfix);
 int main(){
   //char* input = new char[20];
   cout << "Welcome to Shunting Yard Please enter an mathematical expression in infix notation" << endl;
-  char* infix = new char[20];
-  char* prefix = new char[20];
-  char* postfix = new char[20];
-  char* currentState = new char[20];
+  char* infix = new char[50];
+  char* prefix = new char[50];
+  // char* postfix = new char[50];
+  Node* postfix = new Node(NULL);
+  char* currentState = new char[50];
   /*
   Node* tree(NULL);
   Node* queue(NULL);
   Node* stack(NULL);
   Node* tail(NULL);
   */
-  int* precedence = new int;
-  char* associativity = new char;
+  // int* precedence = new int;
+  //char* associativity = new char;
   cout << "here" << endl;
   Node* tree = new Node(NULL);
   Node* queue = new Node(NULL);
@@ -45,16 +48,17 @@ int main(){
   (*counterTwo) = 0;
   int* listSize = new int;
   (*listSize) = 0;
-  char* currentData = new char[20];
+  char* currentData = new char[50];
   //bool* Empty = new bool;
   //Node* tree(NULL);
   //Node* tree = new Node();
-  cin.get(infix, 20);
+  cin.get(infix, 50);
   
-  postfix = ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, precedence, associativity, tail);
+  ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, tail);
+  //Print((*postfix).getNext());
 return 0;
 }
-char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, int* precedence, char* associativity, Node* tail){
+void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, Node* tail){
   
   //do{
   sizeList(infix, listSize);
@@ -72,6 +76,8 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   char* newData = new char[20];
   (*newData) = (*currentData);
     Node* create = new Node(newData);
+    int* precedence = new int;
+  char* associativity = new char;
   // cout << (*create).getData()[0];
   //  Node* create(NULL); // watch identity problem
   //(*create).setData(currentData);
@@ -113,11 +119,21 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
     }
     cout << (*(*create).getPrecedence()) << endl;
     cout << (*(*create).getAssociativity()) << endl;
-    while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) > (*(*create).getPrecedence()) || CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) == (*(*create).getPrecedence()) && (*(*create).getAssociativity()) == 'L' && CheckEmpty(stack) == false && (*Peek(stack, previous, tail)).getData() != "("){
-      //cout << "Here" << endl;
-      Enqueue(queue, Pop(stack, previous, tail));
+    cout << "data" << endl;
+    cout << (*(*Peek(stack, previous, tail)).getPrecedence()) << endl;
+    cout << (*(*create).getPrecedence()) << endl;
+    
+    while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) > (*(*create).getPrecedence()) || CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) == (*(*create).getPrecedence()) && (*(*create).getAssociativity()) == 'L' && CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) != '('){
+      cout << "Here" << endl;
+      //(*previous) = NULL;
+      //(*tail) = NULL;
+      //if(CheckEmpty(stack) == false){
+	previous = NULL;
+	Enqueue(queue, Pop(stack, previous, tail));
       //  cout << "here2" << endl;
-           }
+      }
+      //}
+    
     //    Push()
      Push(stack, create);
   }
@@ -127,6 +143,14 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   }
   if(strcmp(currentState, "Right Paraenthesis") == 0){
     cout << "Right Paraenthesis" << endl;
+    // cout << ((*Peek(stack, previous, tail)).getData()) << endl;
+    while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) != '('){
+      cout << ((*Peek(stack, previous, tail)).getData()) << endl;
+      Enqueue(queue, Pop(stack, previous, tail));
+    }
+    if(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) == '('){
+      Pop(stack, previous, tail);
+    }
   }
   currentState[0] = '\0';
   cout << endl;
@@ -141,14 +165,18 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   // cout << (*create).getData()[0];
   //Print((*queue).getNext());
   }
-   /*
+   
    while(CheckEmpty(stack) == false){
      //cout << "here" << endl;
-     Enqueue(queue, Pop(stack, tail));
+     //Enqueue(queue, Pop(stack, tail));
+     Enqueue(queue, Pop(stack, previous, tail));
    }
-   */
+   
    if(CheckEmpty(queue) == false){
-  Print((*queue).getNext());
+     //   Print((*queue).getNext());
+     // PrintQueue((*queue).getNext(), previous, tail);
+     PrintQueue(queue, previous, tail);
+     
    }
    else{
      cout << "Queue is Empty" << endl;
@@ -160,6 +188,7 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
    else{
      cout << "Stack is Empty" << endl;
    }
+   
   // Print(create)
   // return postfix
   //tokenIndex++;
@@ -167,7 +196,8 @@ char* ShuntingYard(char* infix, char* postfix, char* currentState, int* tokenInd
   //currentData = NULL;
   //}
   //while((*tokenIndex) != 3);
-  return postfix;
+   //BuildPostfix(queue, previous, tail, postfix);
+     //return postfix;
 }
 void Parce(char* infix, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo){
   //cout << strlen(infix) << endl;
@@ -243,33 +273,37 @@ Node* GetEnd(Node* header){
 }
 // fix pop and peek
 Node* Pop(Node* stack, Node* previous, Node* tail){ // ??
-  previous = stack;
+  //previous = stack;
   if((*stack).getNext() == NULL){
     //Node* tempOne = new Node(NULL);
     //(*tempOne) = (*(*stack).getNext());
     //tail = (*stack).getNext();
     //  if(previous != NULL){
     tail = stack;
+    // if(previous != NULL){
+    //cout << "Here1" << endl;
     (*previous).setNext(NULL);
+    //}
     return tail;
     //return tempOne;
   
     // tail = stack
   }  
    else{
-	 //previous = stack;
-      Peek((*stack).getNext(), previous, tail);
+     //cout << "Here2" << endl;
+     previous = stack;
+      Pop((*stack).getNext(), previous, tail);
     }
-
+ 
 }
   Node* Peek(Node* stack, Node* previous, Node* tail){
-    previous = stack;
-  if((*stack).getNext() == NULL){
+    //previous = stack;
+    if((*stack).getNext() == NULL){
     //Node* tempOne = new Node(NULL);
     //(*tempOne) = (*(*stack).getNext());
     //tail = (*stack).getNext();
     //  if(previous != NULL){
-    tail = stack;
+      tail = stack;
     //  (*previous).setNext(NULL);
     return tail;
     //return tempOne;
@@ -277,7 +311,7 @@ Node* Pop(Node* stack, Node* previous, Node* tail){ // ??
     // tail = stack
   }
     else{
-	 //previous = stack;
+      //previous = stack;
       Peek((*stack).getNext(), previous, tail);
     }
 
@@ -301,12 +335,28 @@ void Enqueue(Node* queue, Node* add){ // ??
   (*add).setNext((*queue).getNext());
   (*queue).setNext(add);
 }
-Node* Dequeue(Node* queue, Node* tail){ // fix
-  if((*(*queue).getNext()).getNext() == NULL){
-    tail = (*queue).getNext();
-    (*queue).setNext(NULL);
+Node* Dequeue(Node* queue, Node* previous, Node* tail){ // fix
+    if((*queue).getNext() == NULL){
+    //Node* tempOne = new Node(NULL);
+    //(*tempOne) = (*(*stack).getNext());
+    //tail = (*stack).getNext();
+    //  if(previous != NULL){
+    tail = queue;
+    // if(previous != NULL){
+    //cout << "Here1" << endl;
+    (*previous).setNext(NULL);
+    //}
     return tail;
-  }
+    //return tempOne;
+  
+    // tail = stack
+  }  
+   else{
+     //cout << "Here2" << endl;
+     previous = queue;
+      Dequeue((*queue).getNext(), previous, tail);
+    }
+
 
 }
 bool CheckEmpty(Node* header){
@@ -320,3 +370,17 @@ bool CheckEmpty(Node* header){
 //bool CheckOperator(){
 
 //}
+void PrintQueue(Node* queue, Node* previous, Node* tail){
+  while(CheckEmpty(queue) == false){
+    cout << (*(*Dequeue( queue, previous, tail)).getData()) << " ";
+  }
+  cout << endl;
+
+}
+void BuildPostfix(Node* queue, Node* previous, Node* tail, Node* postfix){
+  while(CheckEmpty(queue) == false){
+    (*postfix).setNext(Dequeue(queue, previous, tail));
+ }
+  // cout << endl;
+
+}
