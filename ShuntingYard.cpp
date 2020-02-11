@@ -16,6 +16,13 @@ void Enqueue(Node* queue, Node* add);
 bool CheckEmpty(Node* header);
 void PrintQueue(Node* queue, Node* previous, Node* tail);
 void BuildPostfix(Node* queue, Node* previous, Node* tail, Node* postfix);
+void createTree(char* infix, Node* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, Node* tail, Node* tree);
+Node* takefromBeg(Node* header, Node* get);
+Node* checkfromBeg(Node* header, Node* get);
+//void createTree(Node* postfix, Node* tree);
+void createInfix(Node* tree);
+void createPrefix(Node* tree);
+void createPostfix(Node* tree);
 int main(){
   //char* input = new char[20];
   cout << "Welcome to Shunting Yard Please enter an mathematical expression in infix notation" << endl;
@@ -44,7 +51,7 @@ int main(){
   (*tokenIndex) = 1;
   int* counterOne = new int;
   (*counterOne) = 0;
-  int*counterTwo = new int;
+  int* counterTwo = new int;
   (*counterTwo) = 0;
   int* listSize = new int;
   (*listSize) = 0;
@@ -53,9 +60,42 @@ int main(){
   //Node* tree(NULL);
   //Node* tree = new Node();
   cin.get(infix, 50);
-  
+  cin.clear();
+  cin.ignore();
   ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, tail);
-  //Print((*postfix).getNext());
+  //cout << "here this" << endl;
+  cout << "Infix: ";
+  cout << infix << endl;
+  cout << "Postfix: ";
+  Print((*postfix).getNext());
+  //createTree(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, tail, tree);
+  //cout << "Here that" << endl;
+  //Print(postfix);
+  char* input = new char[50];
+  bool quit;
+  quit = false;
+  do{
+  cout << "The Tree is now build please enter the form you want to see(infix, prefix or postfix,) or if you want to exit the program type quit" << endl;
+  cin.get(input, 50);
+  cin.clear();
+  cin.ignore();
+  if(strcmp(input, "infix") == 0){
+    //cout << "infix" << end;
+    createInfix(tree);
+  }
+  if(strcmp(input, "prefix") == 0){
+    //cout << "infix" << end;
+    createPrefix(tree);
+  }
+  if(strcmp(input, "postfix") == 0){
+    //cout << "infix" << end;
+    createPostfix(tree);
+  }
+  if(strcmp(input, "quit") == 0){
+    quit = true;
+  }
+  }
+  while(quit == false);
 return 0;
 }
 void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, Node* tail){
@@ -171,7 +211,7 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
      //Enqueue(queue, Pop(stack, tail));
      Enqueue(queue, Pop(stack, previous, tail));
    }
-   
+   /*
    if(CheckEmpty(queue) == false){
      //   Print((*queue).getNext());
      // PrintQueue((*queue).getNext(), previous, tail);
@@ -188,7 +228,7 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
    else{
      cout << "Stack is Empty" << endl;
    }
-   
+   */
   // Print(create)
   // return postfix
   //tokenIndex++;
@@ -196,7 +236,7 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
   //currentData = NULL;
   //}
   //while((*tokenIndex) != 3);
-   //BuildPostfix(queue, previous, tail, postfix);
+   BuildPostfix(queue, previous, tail, postfix);
      //return postfix;
 }
 void Parce(char* infix, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo){
@@ -356,9 +396,35 @@ Node* Dequeue(Node* queue, Node* previous, Node* tail){ // fix
      previous = queue;
       Dequeue((*queue).getNext(), previous, tail);
     }
-
-
 }
+Node* takefromBeg(Node* header, Node* get){
+  if((*header).getNext() != NULL){
+    get = (*header).getNext();
+    if((*(*header).getNext()).getNext() != NULL){
+      (*header).setNext((*(*header).getNext()).getNext());
+      (*get).setNext(NULL);
+    }
+    else{
+      (*header).setNext(NULL);
+    }
+    return get;
+  }
+}
+Node* checkfromBeg(Node* header, Node* get){
+  if((*header).getNext() != NULL){
+    get = (*header).getNext();
+    /*
+    if((*(*header).getNext()).getNext() != NULL){
+      (*header).setNext((*(*header).getNext()).getNext());
+    }
+    else{
+      (*header).setNext(NULL);
+    }
+    */
+    return get;
+  }
+}
+
 bool CheckEmpty(Node* header){
   if((*header).getNext() == NULL){
     return true;
@@ -379,8 +445,37 @@ void PrintQueue(Node* queue, Node* previous, Node* tail){
 }
 void BuildPostfix(Node* queue, Node* previous, Node* tail, Node* postfix){
   while(CheckEmpty(queue) == false){
-    (*postfix).setNext(Dequeue(queue, previous, tail));
+    (*GetEnd(postfix)).setNext(Dequeue(queue, previous, tail));
  }
   // cout << endl;
 
+}
+void createTree(char* infix, Node* postfix, char* currentState, int* tokenIndex, int* counterOne, char* currentData, int* counterTwo, int* listSize, Node* stack, Node* queue, Node* previous, Node* tail, Node* tree){
+   cout << "BUILD THE TREE" << endl;
+   while(CheckEmpty(postfix) == false){
+     //cout << (*(*takefromBeg(postfix, previous)).getData()) << endl;
+       Print((*postfix).getNext());
+     (*currentData) =  (*(*checkfromBeg(postfix, previous)).getData());
+   CheckState(currentState, currentData);
+  if(strcmp(currentState , "Number") == 0){
+    cout << "Number" << endl;
+    (*tree).setNext(takefromBeg(postfix, previous));
+  }
+  else{
+
+  }
+   }
+   //}
+  cout << "Tree: ";
+  Print((*tree).getNext());
+  // Print((*postfix).getNext());
+}
+void createInfix(Node* tree){
+  cout << "infix" << endl;
+}
+void createPrefix(Node* tree){
+  cout << "Prefix" << endl;
+}
+void createPostfix(Node* tree){
+  cout << "Postfix" << endl;
 }
