@@ -20,9 +20,9 @@ void createTree(char* infix, Node* postfix, char* currentState, int* tokenIndex,
 Node* takefromBeg(Node* header, Node* get);
 Node* checkfromBeg(Node* header, Node* get);
 //void createTree(Node* postfix, Node* tree);
-void createInfix(Node* tree, Node* realInfix, Node* previous, char* currentData, char* currentState);
-void createPrefix(Node* tree, Node* prefix);
-void createPostfix(Node* tree, Node* postfix, int* counterThree, Node* origionalTree);
+void createInfix(Node* tree, Node* previous, char* currentData, char* currentState);
+void createPrefix(Node* tree);
+void createPostfix(Node tree, int* counterThree, Node* origionalTree);
 int main(){
   //char* input = new char[20];
   cout << "Welcome to Shunting Yard Please enter an mathematical expression in infix notation" << endl;
@@ -85,19 +85,20 @@ int main(){
   if(strcmp(input, "infix") == 0){
     //cout << "infix" << end;
     (*realInfix).setNext(NULL);
-    createInfix(tree, realInfix, previous, currentData, currentState);
+    createInfix(tree, previous, currentData, currentState);
   }
   if(strcmp(input, "prefix") == 0){
     //cout << "infix" << end;
     (*prefix).setNext(NULL);
-    createPrefix(tree, prefix);
+    createPrefix(tree);
   }
   if(strcmp(input, "postfix") == 0){
     //cout << "infix" << end;
     cout << "Postfix: ";
     (*postfix).setNext(NULL);
-    createPostfix(tree, postfix, counterThree, tree);
+    createPostfix((*tree), counterThree, tree);
     cout << endl;
+    (*counterThree) = 0;
   }
   if(strcmp(input, "quit") == 0){
     quit = true;
@@ -509,7 +510,7 @@ cout << "Right Then Left: " << (*(*(*(*(*tree).getNext()).getRight()).getLeft())
   Print((*tree).getNext());
   // Print((*postfix).getNext());
 }
-void createInfix(Node* tree, Node* realInfix, Node* previous, char* currentData, char* currentState){
+void createInfix(Node* tree, Node* previous, char* currentData, char* currentState){
   // cout << "infix" << endl;
   if(CheckEmpty(tree) == false){
    (*currentData) =  (*(*checkfromBeg(tree, previous)).getData());
@@ -517,40 +518,41 @@ void createInfix(Node* tree, Node* realInfix, Node* previous, char* currentData,
    if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
      cout << "( ";
    }
-   createInfix((*checkfromBeg(tree, previous)).getLeft(), realInfix, previous, currentData, currentState);
+   createInfix((*checkfromBeg(tree, previous)).getLeft(), previous, currentData, currentState);
    Print(checkfromBeg(tree, previous));
-   createInfix((*checkfromBeg(tree, previous)).getRight(), realInfix, previous, currentData, currentState);
+   createInfix((*checkfromBeg(tree, previous)).getRight(), previous, currentData, currentState);
    if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
      cout << ") ";
    }
   }
 }
-void createPrefix(Node* tree, Node* prefix){
+void createPrefix(Node* tree){
   cout << "Prefix" << endl;
 }
-void createPostfix(Node* tree, Node* postfix, int* counterThree, Node* origionalTree){
+void createPostfix(Node tree, int* counterThree, Node* origionalTree){
   // cout << "Postfix" << endl;
   if((*counterThree) == 0){
     //cout << "Here" << endl;
     (*counterThree)++;
-    createPostfix((*tree).getNext(), postfix, counterThree, origionalTree);
+    createPostfix((*tree.getNext()), counterThree, origionalTree);
     // (*counterThree)++;
   }
   //createPostfix((*tree).getNext(), postfix);
     if(CheckEmpty(origionalTree) == false){
-      if((*tree).getLeft() != NULL){
+      if(tree.getLeft() != NULL){
 	//	cout << "here1" << endl;
-	createPostfix((*tree).getLeft(), postfix, counterThree, origionalTree);
+	createPostfix((*tree.getLeft()), counterThree, origionalTree);
       }
 
-      if((*tree).getRight() != NULL){
+      if(tree.getRight() != NULL){
 	//cout << "here2" << endl;
-	createPostfix((*tree).getRight(), postfix, counterThree, origionalTree);
+	createPostfix((*tree.getRight()), counterThree, origionalTree);
       }
-      if((*tree).getData() != NULL){
+      if(tree.getData() != NULL){
 	//	cout << "here1" << endl;
-      cout << (*(*tree).getData()) << " ";
+      cout << (*tree.getData()) << " ";
       }
-}
+    }
+    // if(tree.getNext())
     //cout << endl;
 }
