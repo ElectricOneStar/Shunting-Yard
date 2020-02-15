@@ -1,5 +1,6 @@
 // Node class by Andrew Thomas. This is the node used in stack, queue and tree
 #include <iostream>
+#include <cstdlib>
 #include <cstring>
 #include "Node.h"
 using namespace std;
