@@ -56,9 +56,23 @@ int main(){
   //bool* Empty = new bool;
   //Node* tree(NULL);
   //Node* tree = new Node();
+  bool invalid;
+  invalid = false;
+  do{
   cin.get(infix, 50);
   cin.clear();
   cin.ignore();
+  (*currentData) = infix[0];
+  CheckState(currentState, currentData);
+  //cout << currentState;
+  if(currentState != NULL){
+    invalid = false;
+      }
+   else{
+   invalid = true;
+   }
+  }
+  while(invalid == true);
   ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, tail); // turns infix to postfix
   //cout << "here this" << endl;
   cout << "Infix: ";
@@ -96,6 +110,7 @@ int main(){
     //cout << "infix" << end;
     cout << "Postfix: ";
     (*postfix).setNext(NULL);
+      (*counterThree) = 0;
     createPostfix((*tree), counterThree, tree, (*tree));
     cout << endl;
     (*counterThree) = 0;
@@ -405,8 +420,8 @@ void createTree(char* infix, Node* postfix, char* currentState, int* tokenIndex,
     
   }
    }
-  cout << "Tree: ";
-  Print((*tree).getNext());
+  // cout << "Tree: ";
+  //Print((*tree).getNext());
   // Print((*postfix).getNext());
 }
 void createInfix(Node* tree, Node* previous, char* currentData, char* currentState, int* counterThree, Node* origionalTree){ // creates the infix notation from the tree
