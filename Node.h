@@ -2,6 +2,7 @@
 #ifndef NODE_H
 #define NODE_H
 #include <iostream>
+#include <cstdlib>
 #include <cstring>
 using namespace std;
 
