@@ -21,32 +21,23 @@ Node* takefromBeg(Node* header, Node* get);
 Node* checkfromBeg(Node* header, Node* get);
 //void createTree(Node* postfix, Node* tree);
 void createInfix(Node* tree, Node* previous, char* currentData, char* currentState,  int* counterThree, Node* origionalTree);
-void createPrefix(Node* tree);
+void createPrefix(Node* tree, int* counterThree, Node* origionalTree);
 void createPostfix(Node tree, int* counterThree, Node* origionalTree, Node linearTree);
 int main(){
   //char* input = new char[20];
-  cout << "Welcome to Shunting Yard Please enter an mathematical expression in infix notation" << endl;
+  cout << "Welcome to Shunting Yard. Please enter an mathematical expression in infix notation" << endl;
   char* infix = new char[50];
   Node* prefix = new Node(NULL);
   // char* postfix = new char[50];
   Node* postfix = new Node(NULL);
   Node* realInfix = new Node(NULL);
   char* currentState = new char[50];
-  /*
-  Node* tree(NULL);
-  Node* queue(NULL);
-  Node* stack(NULL);
-  Node* tail(NULL);
-  */
-  // int* precedence = new int;
-  //char* associativity = new char;
-  cout << "here" << endl;
   Node* tree = new Node(NULL);
   Node* queue = new Node(NULL);
   Node* stack = new Node(NULL);
   Node* previous = new Node(NULL);
   Node* tail = new Node(NULL);
-  cout << "here2" << endl;
+  //cout << "here2" << endl;
   //char* currentState = new char[20];
   int* tokenIndex = new int;
   (*tokenIndex) = 1;
@@ -92,8 +83,11 @@ int main(){
   }
   if(strcmp(input, "prefix") == 0){
     //cout << "infix" << end;
+    cout << "Prefix: ";
     (*prefix).setNext(NULL);
-    createPrefix(tree);
+    (*counterThree) = 0;
+    createPrefix(tree, counterThree, tree);
+    cout << endl;
   }
   if(strcmp(input, "postfix") == 0){
     //cout << "infix" << end;
@@ -118,43 +112,25 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
   // cout << "hi" << endl;
    while((*tokenIndex) != (*listSize)){
   Parce(infix, tokenIndex, counterOne, currentData, counterTwo);
-  //cout << "a" << endl;
-  //cout << strlen(currentData) << endl;
-  //cout << "here" << endl;
-  for(int i = 0; i < strlen(currentData); i++){
-   cout << currentData[i];
-  }
-  //  cout << "here2 " << endl;
   char* newData = new char[20];
   (*newData) = (*currentData);
     Node* create = new Node(newData);
     int* precedence = new int;
   char* associativity = new char;
-  // cout << (*create).getData()[0];
-  //  Node* create(NULL); // watch identity problem
-  //(*create).setData(currentData);
- // cout << (*create).getData()[0];
   CheckState(currentState, currentData);
   if(strcmp(currentState , "Number") == 0){
-    cout << "Number" << endl;
-    //(*queue).setData(currentData);
-    //cout << (*create).getData()[0];
-    //Push(queue, create);
     Enqueue(queue, create);
-    //cout << (*(*queue).getNext()).getData()[0];
-    // Print((*queue).getNext());
-    // cout << "here" << endl;
   }
   if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
     if(strcmp(currentState, "Addition or Subtraction") == 0){
-      cout << "Addition or Subtraction" << endl;
+      //cout << "Addition or Subtraction" << endl;
       (*precedence) = 2;
       (*associativity) = 'L';
       (*create).setPrecedence(precedence);
       (*create).setAssociativity(associativity);
     }
     if(strcmp(currentState, "Power") == 0){
-    cout << "Power" << endl;
+      //cout << "Power" << endl;
           (*precedence) = 4;
       (*associativity) = 'R';
       (*create).setPrecedence(precedence);
@@ -162,21 +138,21 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
 
     }
     if(strcmp(currentState, "Division or Multiplication") == 0){
-      cout << "Division or Multiplication" << endl;
+      //cout << "Division or Multiplication" << endl;
       (*precedence) = 3;
       (*associativity) = 'L';
       (*create).setPrecedence(precedence);
       (*create).setAssociativity(associativity);
 
     }
-    cout << (*(*create).getPrecedence()) << endl;
-    cout << (*(*create).getAssociativity()) << endl;
-    cout << "data" << endl;
-    cout << (*(*Peek(stack, previous, tail)).getPrecedence()) << endl;
-    cout << (*(*create).getPrecedence()) << endl;
+    // cout << (*(*create).getPrecedence()) << endl;
+    //cout << (*(*create).getAssociativity()) << endl;
+    //cout << "data" << endl;
+    //cout << (*(*Peek(stack, previous, tail)).getPrecedence()) << endl;
+    //cout << (*(*create).getPrecedence()) << endl;
     
     while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) > (*(*create).getPrecedence()) || CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getPrecedence()) == (*(*create).getPrecedence()) && (*(*create).getAssociativity()) == 'L' && CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) != '('){
-      cout << "Here" << endl;
+      //cout << "Here" << endl;
       //(*previous) = NULL;
       //(*tail) = NULL;
       //if(CheckEmpty(stack) == false){
@@ -190,14 +166,14 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
      Push(stack, create);
   }
   if(strcmp(currentState, "Left Paraenthesis") == 0){
-    cout << "Left Paraenthesis" << endl;
+    //cout << "Left Paraenthesis" << endl;
     Push(stack, create);
   }
   if(strcmp(currentState, "Right Paraenthesis") == 0){
-    cout << "Right Paraenthesis" << endl;
+    //cout << "Right Paraenthesis" << endl;
     // cout << ((*Peek(stack, previous, tail)).getData()) << endl;
     while(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) != '('){
-      cout << ((*Peek(stack, previous, tail)).getData()) << endl;
+      //  cout << ((*Peek(stack, previous, tail)).getData()) << endl;
       Enqueue(queue, Pop(stack, previous, tail));
     }
     if(CheckEmpty(stack) == false && (*(*Peek(stack, previous, tail)).getData()) == '('){
@@ -205,7 +181,7 @@ void ShuntingYard(char* infix, Node* postfix, char* currentState, int* tokenInde
     }
   }
   currentState[0] = '\0';
-  cout << endl;
+  // cout << endl;
   //cout << (*tokenIndex);
   currentData[0] = '\0';
   (*counterOne) = 0;
@@ -494,15 +470,6 @@ void createTree(char* infix, Node* postfix, char* currentState, int* tokenIndex,
     (*Operator).setLeft(Pop(tree, previous, tail));
     }
     Push(tree, Operator);
-    //cout << "here" << endl;
-    // both tests have worked
-    // cout << "Right: " << (*(*(*Operator).getRight()).getData()) << endl;
-    //cout << "Left: " << (*(*(*Operator).getLeft()).getData()) << endl;
-    
-    /*
-cout << "Right Then Left: " << (*(*(*(*(*tree).getNext()).getRight()).getLeft()).getData()) << endl;
-    cout << "Right Then Right: " << (*(*(*(*(*tree).getNext()).getRight()).getRight()).getData()) << endl;
-    */
     
   }
    }
@@ -524,17 +491,6 @@ void createInfix(Node* tree, Node* previous, char* currentData, char* currentSta
     }
   //cout << "here2" << endl;
    if(CheckEmpty(origionalTree) == false){
-    //cout << "here2" << endl;
-     /*  if((*tree).getData() != NULL){
-    (*currentData) = (*(*tree).getData());
-     CheckState(currentState, currentData);
-    }
-    // cout << "here3" << endl;
-     if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
-       //    cout << "( ";
-	 //	 cout << "here4" << endl;
-       }
-     */
        if((*tree).getLeft() != NULL){
 	 //cout << "here4" << endl;
 	 createInfix((*tree).getLeft(), previous, currentData, currentState, counterThree, origionalTree);
@@ -549,27 +505,30 @@ void createInfix(Node* tree, Node* previous, char* currentData, char* currentSta
 	 createInfix((*tree).getRight(), previous, currentData, currentState, counterThree, origionalTree);
        
        }
-       //         if(CheckEmpty(origionalTree) == false){
-    //cout << "here2" << endl;
-       /*
-       if((*tree).getData() != NULL){
-    (*currentData) = (*(*tree).getData());
-     CheckState(currentState, currentData);
-    }
-       
-       if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){
-	 //cout << "here7" << endl;
-	 //cout << ") ";
-
-       }
-       */
-       //   cout << "here8" << endl;
   }
   //return;
   //  cout << "here9" << endl;
 }
-void createPrefix(Node* tree){
-  cout << "Prefix" << endl;
+void createPrefix(Node* tree, int* counterThree, Node* origionalTree){
+  //  cout << "Prefix" << endl;
+  if((*counterThree) == 0){
+    //cout << "Here" << endl;
+    (*counterThree)++;
+    createPrefix((*tree).getNext(), counterThree, origionalTree);
+  }
+  if(CheckEmpty(origionalTree) == false){
+        if((*tree).getData() != NULL){
+	 cout << (*(*tree).getData()) << " ";
+       // cout << "here5" << endl;
+       }
+      if((*tree).getLeft() != NULL){
+	createPrefix((*tree).getLeft(), counterThree, origionalTree);
+      }
+      if((*tree).getRight() != NULL){
+	createPrefix((*tree).getRight(), counterThree, origionalTree);
+      }
+  }
+
 }
 void createPostfix(Node tree, int* counterThree, Node* origionalTree, Node linearTree){
   // cout << "Postfix" << endl;
@@ -579,6 +538,7 @@ void createPostfix(Node tree, int* counterThree, Node* origionalTree, Node linea
     createPostfix((*tree.getNext()), counterThree, origionalTree, (*linearTree.getNext()));
     // (*counterThree)++;
   }
+  
   //createPostfix((*tree).getNext(), postfix);
     if(CheckEmpty(origionalTree) == false){
       if(tree.getLeft() != NULL){
