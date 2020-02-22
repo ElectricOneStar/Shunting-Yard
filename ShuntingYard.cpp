@@ -2,6 +2,7 @@
 Shunting Yard by Andrew Thomas 2/14/20 Mr.Galbraith Data structure class. Shunting yard is a code that asks the user for an algorith in infix notation. Then it figures out the postfix notation, prints postfix and infix, and builds the tree. Then it asks the user if they want postfix, infix, or prefix which is gotten by a recursive print from the tree.
  */
 #include <cstring> // libraries
+#include <cstdlib>
 #include<iostream>
 #include "Node.h"
 using namespace std; // functions
