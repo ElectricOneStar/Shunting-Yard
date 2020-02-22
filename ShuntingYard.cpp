@@ -1,7 +1,6 @@
 /*
 Shunting Yard by Andrew Thomas 2/14/20 Mr.Galbraith Data structure class. Shunting yard is a code that asks the user for an algorith in infix notation. Then it figures out the postfix notation, prints postfix and infix, and builds the tree. Then it asks the user if they want postfix, infix, or prefix which is gotten by a recursive print from the tree.
  */
-#include <cstdlib>
 #include <cstring> // libraries
 #include<iostream>
 #include "Node.h"
@@ -29,7 +28,7 @@ void createPrefix(Node* tree, int* counterThree, Node* origionalTree);
 void createPostfix(Node tree, int* counterThree, Node* origionalTree, Node linearTree);
 int main(){
   //char* input = new char[20];
-  cout << "Welcome to Shunting Yard. Please enter an mathematical expression in infix notation" << endl;
+  cout << "Welcome to Shunting Yard. Please enter an mathematical expression in infix notation. (x is multiplication and % is division)" << endl;
   char* infix = new char[50]; // initalizations
   Node* prefix = new Node(NULL);
   // char* postfix = new char[50];
@@ -76,7 +75,7 @@ int main(){
   while(invalid == true);
   ShuntingYard(infix, postfix, currentState, tokenIndex, counterOne, currentData, counterTwo, listSize, stack, queue, previous, tail); // turns infix to postfix
   //cout << "here this" << endl;
-  cout << "Infix: ";
+  cout << "Input Infix: ";
   cout << infix << endl; // prints input infix
   cout << "Postfix: ";
   Print((*postfix).getNext()); // prints created postfix
@@ -436,6 +435,12 @@ void createInfix(Node* tree, Node* previous, char* currentData, char* currentSta
     }
   //cout << "here2" << endl;
    if(CheckEmpty(origionalTree) == false){
+      if((*tree).getData() != NULL){
+	CheckState(currentState, (*tree).getData());
+  if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){ // operator
+    cout << "( ";
+  }	
+      }
      if((*tree).getLeft() != NULL){ // left
 	 //cout << "here4" << endl;
 	 createInfix((*tree).getLeft(), previous, currentData, currentState, counterThree, origionalTree);
@@ -449,8 +454,15 @@ void createInfix(Node* tree, Node* previous, char* currentData, char* currentSta
 	 //cout << "here6" << endl;
 	 createInfix((*tree).getRight(), previous, currentData, currentState, counterThree, origionalTree);
        
-       }
-  }
+     }
+     if((*tree).getData() != NULL){
+	CheckState(currentState, (*tree).getData());
+  if(strcmp(currentState, "Addition or Subtraction") == 0 || strcmp(currentState, "Power") == 0 || strcmp(currentState, "Division or Multiplication") == 0){ // operator
+    cout << ") ";
+  }	
+     }
+
+   }
   //return;
   //  cout << "here9" << endl;
 }
